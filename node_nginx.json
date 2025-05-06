@@ -1,9 +1,13 @@
 {
+    "variables": {
+        "aws_region": "us-east-1",
+        "aws_source_ami": "ami-045a47a3b15302634"
+    },
     "builders": [
         {
             "type": "amazon-ebs",
-            "region": "us-east-1",
-            "source_ami": "ami-045a47a3b15302634",
+            "region": "{{user `aws_region`}}",
+            "source_ami": "{{user `aws_source_ami`}}",
             "instance_type": "t2.micro",
             "ssh_username": "ubuntu",
             "ami_name": "imagen-node-nginx-{{timestamp}}",
@@ -15,6 +19,19 @@
         {
             "type": "shell",
             "script": "setup.sh"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "manifest",
+            "output": "manifest.json",
+            "strip_path": true
+        },
+        {
+            "type": "shell-local",
+            "inline": [
+                "./launch_instance.sh"
+            ]
         }
     ]
 }
